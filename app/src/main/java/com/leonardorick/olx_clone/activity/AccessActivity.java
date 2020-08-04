@@ -3,7 +3,6 @@ package com.leonardorick.olx_clone.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -16,12 +15,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.leonardorick.olx_clone.MainActivity;
 import com.leonardorick.olx_clone.R;
 import com.leonardorick.olx_clone.helper.FirebaseConfig;
 import com.leonardorick.olx_clone.helper.MessageHelper;
 
-public class LoginActivity extends AppCompatActivity {
+public class AccessActivity extends AppCompatActivity {
     private EditText loginEmail, loginPassword;
     private Switch loginSwitch;
     private FirebaseAuth auth;
@@ -29,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_access);
         auth = FirebaseConfig.getAuth();
 
         initViewElements();
