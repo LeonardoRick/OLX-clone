@@ -23,7 +23,7 @@ public class FirebaseConfig {
      * static method to keep FirebaseFirestore reference as one instance on entire app
      * @return FirebaseFirestore global instance
      */
-    public static FirebaseFirestore getFirebaseDatabase() {
+    public static FirebaseFirestore getFirebaseFirestore() {
         if (db == null) db = FirebaseFirestore.getInstance();
         return db;
     }

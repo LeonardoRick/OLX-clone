@@ -51,7 +51,14 @@ public class AdvertsActivity extends AppCompatActivity {
                 break;
             case R.id.menuAccess:
                 startActivity(new Intent(getApplicationContext(), AccessActivity.class));
+                break;
+            case R.id.menuAdverts:
+                startActivity(new Intent(getApplicationContext(), MyAdvertsActivity.class));
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

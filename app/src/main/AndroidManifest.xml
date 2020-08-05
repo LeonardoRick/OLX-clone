@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.leonardorick.olx_clone">
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+
     <application
         android:name=".CustomApplication"
         android:allowBackup="true"
@@ -10,6 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OLXclone">
+        <activity android:name=".activity.NewAdvertActivity"
+            android:parentActivityName=".activity.MyAdvertsActivity"></activity>
+        <activity
+            android:name=".activity.MyAdvertsActivity"
+            android:parentActivityName=".activity.AdvertsActivity" />
         <activity android:name=".activity.AdvertsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,10 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AccessActivity">
-
-        </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".activity.AccessActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

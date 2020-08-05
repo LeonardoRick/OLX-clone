@@ -45,4 +45,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:18.0.0'
     implementation 'com.google.firebase:firebase-firestore:20.0.0'
     implementation 'com.google.firebase:firebase-storage:18.0.0'
+
+    // Currency Mask
+    implementation 'com.github.BlacKCaT27:CurrencyEditText:2.0.2'
+
+    // Phone Mask
+    implementation 'com.github.santalu:maskara:1.0.0'
 }

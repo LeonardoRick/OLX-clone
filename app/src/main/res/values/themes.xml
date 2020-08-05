@@ -8,4 +8,9 @@
         <item name="colorAccent">#FF5722</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="EditTextTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorControlNormal">@color/lightGray</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="colorControlHighlight">?attr/colorPrimary</item>
+    </style>
 </resources>
