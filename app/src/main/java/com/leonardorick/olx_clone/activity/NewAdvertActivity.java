@@ -106,6 +106,7 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
 
     }
     private void saveAd(String state, String category, String title, String desc, String value, String phone) {
+//        TODO: add advert id
         Advert advert = new Advert("", state, category, title, desc, value, phone);
 
         for (int i = 0; i < toUploadImagesList.size(); i++) {
