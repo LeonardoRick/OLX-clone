@@ -1,5 +1,6 @@
 package com.leonardorick.olx_clone.model;
 
+import com.leonardorick.olx_clone.helper.FirebaseConfig;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ public class Advert {
 
     public Advert() { }
 
-    public Advert(String id, String state, String category, String title, String desc, String value, String phone) {
-        this.id = id;
+    public Advert(String state, String category, String title, String desc, String value, String phone) {
+        this.id = FirebaseConfig.getFirebaseDatabase().push().getKey();
         this.state = state;
         this.category = category;
         this.title = title;

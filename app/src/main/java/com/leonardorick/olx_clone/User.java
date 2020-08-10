@@ -1,6 +1,6 @@
 package com.leonardorick.olx_clone;
 
-import com.google.firebase.firestore.Exclude;
+import com.google.firebase.database.Exclude;
 
 public class User {
     private String email;

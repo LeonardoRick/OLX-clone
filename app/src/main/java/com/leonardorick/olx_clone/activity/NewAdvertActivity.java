@@ -38,8 +38,11 @@ import com.leonardorick.olx_clone.model.AdvertHelper;
 import com.santalu.maskara.widget.MaskEditText;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class NewAdvertActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText editTitle, editDesc;
@@ -48,8 +51,9 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
 
     private Spinner spinnerStates, spinnerCategories;
     private ImageView image1, image2, image3;
-    private List<Uri> toUploadImagesList = new ArrayList<>();
-    private List<String> uploadedImagesList = new ArrayList<>();
+    private Map<Integer, Uri> toUploadImagesList = new HashMap();
+    private List<String> uploadedImagesRef = new ArrayList<>();
+    Integer uploaded = 0;
 
     private static final int STORAGE_REQUEST_IMG1 = 1;
     private static final int STORAGE_REQUEST_IMG2 = 2;
@@ -79,7 +83,6 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
         image1.setOnClickListener(this);
         image2.setOnClickListener(this);
         image3.setOnClickListener(this);
-
         // Config locale to pt -> portugues BR -> brasil
         Locale locale = new Locale("pt", "BR");
         editValue.setLocale(locale);
@@ -102,43 +105,43 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
         spinnerCategories.setAdapter(categoriesAdapter);
     }
 
-    private void uploadImagesOnStorage() {
-
-    }
     private void saveAd(String state, String category, String title, String desc, String value, String phone) {
-//        TODO: add advert id
-        Advert advert = new Advert("", state, category, title, desc, value, phone);
+        MessageHelper.openLoadingDialog(this, "Aguarde, carregando");
+        Advert advert = new Advert(state, category, title, desc, value, phone);
 
-        for (int i = 0; i < toUploadImagesList.size(); i++) {
-            StorageReference imageRef = FirebaseConfig.getFirebaseStorage().child(Constants.Storage.ADVERTS)
-                    .child(advert.getId())
-                    .child("image" + i + ".jpeg");
+        for (Map.Entry<Integer, Uri> entry : toUploadImagesList.entrySet()) {
 
-            UploadTask uploadTask = imageRef.putFile((toUploadImagesList.get(i)));
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    MessageHelper.showLongToast("Erro ao fazer upload da imagem");
-                    Log.e("INFO", "Falha ao fazer upload da imagem: " + e.getMessage());
-                }
-            });
+                StorageReference imageRef = FirebaseConfig.getFirebaseStorage().child(Constants.Storage.ADVERTS)
+                        .child(advert.getId())
+                        .child("image" + uploaded + ".jpeg");
+                UploadTask uploadTask = imageRef.putFile(entry.getValue());
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        MessageHelper.showLongToast("Erro ao fazer upload da imagem");
+                        Log.e("INFO", "Falha ao fazer upload da imagem: " + e.getMessage());
+                        MessageHelper.closeLoadingDialog();
+                    }
+                });
 
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            uploadedImagesList.add(uri.toString());
-                            if (uploadedImagesList.size() == toUploadImagesList.size()) {
-                                advert.setImages(uploadedImagesList);
-                                AdvertHelper.saveAdOnDatabase(advert);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                uploaded++;
+                                uploadedImagesRef.add(uri.toString());
+                                if (uploadedImagesRef.size() == toUploadImagesList.size()) {
+                                    advert.setImages(uploadedImagesRef);
+                                    AdvertHelper.saveAdOnDatabase(advert);
+                                    MessageHelper.closeLoadingDialog();
+                                    finish();
+                                }
                             }
-                        }
-                    });
-                }
-            });
-
+                        });
+                    }
+                });
         }
     }
 
@@ -147,9 +150,8 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
         String category = spinnerCategories.getSelectedItem().toString();
         String title = editTitle.getText().toString();
         String desc = editDesc.getText().toString();
-        String value = String.valueOf(editValue.getRawValue());
+        String value = editValue.getText().toString();
         String phone = editPhone.getUnMasked();
-
         if (toUploadImagesList.size() > 0) {
             if (!title.isEmpty()) {
                 if (!value.isEmpty() && !value.equals("0")) {
@@ -165,25 +167,36 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
             } else
                 MessageHelper.showLongToast("Preencha o campo titulo");
         } else
-            MessageHelper.showLongToast("Selecione apenas uma foto");
+            MessageHelper.showLongToast("Selecione pelo menos uma foto");
     }
 
 
 
     private void uploadImage(Uri image, int requestCode) {
-        if (requestCode == STORAGE_REQUEST_IMG1)
-            image1.setImageURI(image);
-        else if (requestCode == STORAGE_REQUEST_IMG2)
-            image2.setImageURI(image);
-        else if (requestCode == STORAGE_REQUEST_IMG3)
-            image3.setImageURI(image);
 
-        toUploadImagesList.add(image);
+        int index = 0;
+        if (requestCode == STORAGE_REQUEST_IMG1) {
+            image1.setImageURI(image);
+        } else if (requestCode == STORAGE_REQUEST_IMG2) {
+            image2.setImageURI(image);
+            index = 1;
+        } else if (requestCode == STORAGE_REQUEST_IMG3) {
+            image3.setImageURI(image);
+            index = 2;
+        }
+        boolean notAddedYet = true;
+        try {
+            toUploadImagesList.remove(index);
+        } catch (IndexOutOfBoundsException e) {
+            toUploadImagesList.put(index, image);
+            notAddedYet = false;
+        }
+        if (notAddedYet)
+            toUploadImagesList.put(index, image);
     }
 
     @Override
     public void onClick(View v) {
-        System.out.println(v.getId());
         switch (v.getId()) {
             case R.id.imageView1:
                 ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_REQUEST_IMG1);
