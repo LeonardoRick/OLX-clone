@@ -39,7 +39,6 @@ import com.santalu.maskara.widget.MaskEditText;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class NewAdvertActivity extends AppCompatActivity implements View.OnClick
         statesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerStates.setAdapter(statesAdapter);
 
-        String[] categories = getResources().getStringArray(R.array.caregories);
+        String[] categories = getResources().getStringArray(R.array.categories);
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, categories
         );

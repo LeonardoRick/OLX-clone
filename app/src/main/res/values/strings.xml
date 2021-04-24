@@ -32,7 +32,7 @@
     </string-array>
 
 
-    <string-array name="caregories">
+    <string-array name="categories">
         <item>Automóveis</item>
         <item>Imóveis</item>
         <item>Eletronicos</item>
